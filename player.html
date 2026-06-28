@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&#127925;</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0d0d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+      color: #fff;
+      user-select: none;
+    }
+
+    #logo {
+      font-size: 2rem;
+      letter-spacing: 0.15em;
+      font-weight: 700;
+      color: #1db954;
+      margin-bottom: 2.5rem;
+    }
+
+    #disc {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 48% 48%, #333 0%, #111 60%, #1db954 100%);
+      box-shadow: 0 0 40px rgba(29, 185, 84, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+      transition: transform 0.1s;
+    }
+
+    #disc.spinning {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    #disc-center {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #0d0d0d;
+    }
+
+    #play-btn {
+      background: #1db954;
+      border: none;
+      border-radius: 50px;
+      color: #000;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 0.9rem 2.8rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 1.5rem;
+    }
+
+    #play-btn:hover  { background: #1ed760; }
+    #play-btn:active { transform: scale(0.96); }
+
+    #status {
+      font-size: 0.85rem;
+      color: #666;
+      min-height: 1.2em;
+    }
+
+    /* YouTube iframe — hidden off-screen, audio still plays */
+    #yt-frame {
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="logo">ХИТСТЕР BG</div>
+
+  <div id="disc" class="stopped">
+    <div id="disc-center"></div>
+  </div>
+
+  <button id="play-btn">&#9654; Пусни</button>
+  <div id="status">Готов</div>
+
+  <div id="yt-frame"></div>
+
+  <script>
+    const params  = new URLSearchParams(window.location.search);
+    const videoId = params.get('v');
+
+    const btn    = document.getElementById('play-btn');
+    const disc   = document.getElementById('disc');
+    const status = document.getElementById('status');
+
+    let player = null;
+    let playing = false;
+
+    function onYTReady() {
+      if (!videoId) {
+        status.textContent = 'Няма видео ID в URL-а (?v=VIDEO_ID)';
+        btn.disabled = true;
+        return;
+      }
+
+      player = new YT.Player('yt-frame', {
+        videoId: videoId,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+          rel: 0,
+          showinfo: 0
+        },
+        events: {
+          onStateChange: onStateChange
+        }
+      });
+    }
+
+    function onStateChange(e) {
+      if (e.data === YT.PlayerState.PLAYING) {
+        disc.classList.add('spinning');
+        btn.textContent = '⏸ Пауза';
+        status.textContent = 'Свири...';
+        playing = true;
+      } else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
+        disc.classList.remove('spinning');
+        btn.textContent = '▶ Пусни';
+        status.textContent = e.data === YT.PlayerState.ENDED ? 'Края' : 'Пауза';
+        playing = false;
+      }
+    }
+
+    btn.addEventListener('click', () => {
+      if (!player) return;
+      if (playing) {
+        player.pauseVideo();
+      } else {
+        player.playVideo();
+      }
+    });
+
+    window.onYouTubeIframeAPIReady = onYTReady;
+  </script>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>
