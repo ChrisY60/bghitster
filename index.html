@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Хитстер БГ</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0d0d;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 1.2rem 1rem 0.8rem;
+      text-align: center;
+      background: linear-gradient(180deg, #111 0%, transparent 100%);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: #1db954;
+    }
+
+    header p {
+      font-size: 0.82rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    /* ── Scanner area ── */
+    #scanner-wrap {
+      position: relative;
+      width: min(90vw, 360px);
+      margin: 1.5rem auto 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 0 3px #1db954, 0 0 40px rgba(29,185,84,0.2);
+    }
+
+    /* html5-qrcode renders a video inside here */
+    #reader {
+      width: 100%;
+      background: #000;
+    }
+
+    /* Corner brackets overlay */
+    #scanner-wrap::before,
+    #scanner-wrap::after,
+    #corner-bl,
+    #corner-br {
+      content: '';
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-color: #1db954;
+      border-style: solid;
+      z-index: 10;
+      pointer-events: none;
+    }
+    #scanner-wrap::before { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
+    #scanner-wrap::after  { top: 10px; right: 10px; border-width: 3px 3px 0 0; }
+    #corner-bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; }
+    #corner-br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+
+    /* Scan line animation */
+    #scan-line {
+      position: absolute;
+      left: 12px; right: 12px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #1db954, transparent);
+      z-index: 9;
+      animation: scan 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scan {
+      0%   { top: 12px; }
+      50%  { top: calc(100% - 14px); }
+      100% { top: 12px; }
+    }
+
+    /* ── Status ── */
+    #status {
+      margin: 1.2rem auto 0;
+      width: min(90vw, 360px);
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      font-size: 0.88rem;
+      color: #aaa;
+      text-align: center;
+      min-height: 2.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    #status.ok  { color: #1db954; border-color: #1db954; }
+    #status.err { color: #e55; border-color: #e55; }
+
+    /* ── Start button (shown before camera starts) ── */
+    #start-btn {
+      margin-top: 1.2rem;
+      background: #1db954;
+      border: none;
+      border-radius: 50px;
+      color: #000;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.85rem 2.5rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    #start-btn:hover  { background: #1ed760; }
+    #start-btn:active { transform: scale(0.96); }
+    #start-btn:disabled { background: #555; color: #888; cursor: default; transform: none; }
+
+    /* ── Next song button (shown after a scan) ── */
+    #next-btn {
+      display: none;
+      margin-top: 1rem;
+      background: transparent;
+      border: 2px solid #1db954;
+      border-radius: 50px;
+      color: #1db954;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.75rem 2.2rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: background 0.2s, color 0.2s, transform 0.1s;
+    }
+
+    #next-btn:hover  { background: #1db954; color: #000; }
+    #next-btn:active { transform: scale(0.96); }
+
+    footer {
+      margin-top: auto;
+      padding: 1.5rem;
+      font-size: 0.72rem;
+      color: #333;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>&#127926; ХИТСТЕР БГ</h1>
+    <p>Насочи камерата към QR кода на картата</p>
+  </header>
+
+  <div id="scanner-wrap">
+    <div id="reader"></div>
+    <div id="scan-line"></div>
+    <div id="corner-bl"></div>
+    <div id="corner-br"></div>
+  </div>
+
+  <div id="status">Натисни "Сканирай" за да стартираш камерата</div>
+
+  <button id="start-btn" onclick="startScanner()">&#128247; Сканирай</button>
+  <button id="next-btn" onclick="resumeScanner()">&#10145; Следваща песен</button>
+
+  <footer>Хитстер България &bull; наредете картите хронологично</footer>
+
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script>
+    let scanner = null;
+    let scanning = false;
+
+    const status   = document.getElementById('status');
+    const startBtn = document.getElementById('start-btn');
+    const nextBtn  = document.getElementById('next-btn');
+
+    function setStatus(msg, cls = '') {
+      status.textContent = msg;
+      status.className = cls;
+    }
+
+    function extractVideoId(text) {
+      // Accept bare video IDs (11 chars), full YouTube URLs, or player.html?v= links
+      const ytMatch = text.match(/(?:v=|youtu\.be\/|player\.html\?v=)([A-Za-z0-9_-]{11})/);
+      if (ytMatch) return ytMatch[1];
+      if (/^[A-Za-z0-9_-]{11}$/.test(text.trim())) return text.trim();
+      return null;
+    }
+
+    function onScanSuccess(decodedText) {
+      if (!scanning) return;
+      scanning = false;
+
+      const videoId = extractVideoId(decodedText);
+      if (!videoId) {
+        setStatus('QR кодът не съдържа YouTube видео. Опитай отново.', 'err');
+        setTimeout(resumeScanner, 2000);
+        return;
+      }
+
+      setStatus('Намерена! Зарежда плейъра…', 'ok');
+      nextBtn.style.display = 'none';
+
+      // Small delay so the user sees the success message before navigating
+      setTimeout(() => {
+        window.location.href = 'player.html?v=' + videoId;
+      }, 600);
+    }
+
+    function onScanError(/* err */) {
+      // Fires constantly while scanning — ignore
+    }
+
+    function startScanner() {
+      startBtn.disabled = true;
+      startBtn.textContent = 'Зарежда камерата…';
+      setStatus('Зарежда камерата…');
+
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+        rememberLastUsedCamera: true,
+        showTorchButtonIfSupported: true,
+      };
+
+      scanner = new Html5QrcodeScanner('reader', config, false);
+      scanner.render(onScanSuccess, onScanError);
+
+      // Patch status after render
+      setTimeout(() => {
+        startBtn.style.display = 'none';
+        setStatus('Сканира… насочи камерата към QR кода');
+        scanning = true;
+      }, 800);
+    }
+
+    function resumeScanner() {
+      nextBtn.style.display = 'none';
+      setStatus('Сканира… насочи камерата към QR кода');
+      scanning = true;
+    }
+
+    // When user comes back via browser Back button, show "Next song"
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        if (scanner) {
+          setStatus('Готов за следваща карта!', 'ok');
+          nextBtn.style.display = 'inline-block';
+          scanning = false;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

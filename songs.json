@@ -1,38 +1,50 @@
 [
   {
-    "name": "Малка е земята",
+    "name": "Моя страна, моя България",
     "artist": "Емил Димитров",
-    "year": 1965,
-    "youtube_id": "REPLACE_ME"
-  },
-  {
-    "name": "Де да беше друг",
-    "artist": "Лили Иванова",
-    "year": 1974,
-    "youtube_id": "REPLACE_ME"
-  },
-  {
-    "name": "Лале ли си, зюмбюл ли си",
-    "artist": "Бисер Киров",
     "year": 1971,
-    "youtube_id": "REPLACE_ME"
+    "youtube_id": "R07jy7LrC4Q"
   },
   {
-    "name": "Китаро",
+    "name": "Остани",
+    "artist": "Лили Иванова",
+    "year": 1977,
+    "youtube_id": "gPEG9Nior-8"
+  },
+  {
+    "name": "Как никой друг",
+    "artist": "Лили Иванова",
+    "year": 1984,
+    "youtube_id": "jfnbls6VHdM"
+  },
+  {
+    "name": "Един от многото",
     "artist": "Слави Трифонов и Ку-Ку Бенд",
-    "year": 1995,
-    "youtube_id": "REPLACE_ME"
+    "year": 1997,
+    "youtube_id": "OIrAy-y71Pk"
   },
   {
-    "name": "Планета Азис",
+    "name": "Залеза и зората",
+    "artist": "Камелия",
+    "year": 2002,
+    "youtube_id": "jCKfx7RyLng"
+  },
+  {
+    "name": "Искай ме",
     "artist": "Азис",
-    "year": 2003,
-    "youtube_id": "REPLACE_ME"
+    "year": 2004,
+    "youtube_id": "v6D6_RM99j0"
   },
   {
-    "name": "Вятър ечи",
-    "artist": "Теодосий Спасов",
-    "year": 1988,
-    "youtube_id": "REPLACE_ME"
+    "name": "Светът е твой",
+    "artist": "Миро",
+    "year": 2013,
+    "youtube_id": "IgrleedxCuE"
+  },
+  {
+    "name": "Увехна",
+    "artist": "Фики",
+    "year": 2021,
+    "youtube_id": "xw5Fzz2gBcE"
   }
 ]
